@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ivan Larrazabal — Profile</title>
+<title>Contact — Ivan Larrazabal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
@@ -22,31 +22,25 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.6; }
   a { color: inherit; text-decoration: none; }
-  
+
   .stripe { display: flex; height: 4px; width: 64px; }
   .stripe span { flex: 1; }
   .stripe span:nth-child(1) { background: var(--gold); }
   .stripe span:nth-child(2) { background: var(--gold-dim); }
   .stripe span:nth-child(3) { background: var(--panel-line); }
 
-  header { border-bottom: 1px solid var(--panel-line); padding: 48px 24px 32px; text-align: center; }
-  .avatar-ring { width: 130px; height: 130px; margin: 0 auto 20px; border-radius: 50%; border: 2px solid var(--gold); padding: 6px; }
-  .avatar-ring .avatar { width: 100%; height: 100%; border-radius: 50%; background: var(--panel); overflow: hidden; }
-  .avatar-ring .avatar-img { width: 100%; height: 100%; object-fit: cover; }
-  
-  .eyebrow { font-family: var(--font-display); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 5vw, 3.2rem); text-transform: uppercase; }
-  .subtitle { color: var(--ink-muted); font-size: 1.1rem; font-style: italic; margin-top: 4px; }
-  .stripe.centered { margin: 18px auto 0; }
+  header { border-bottom: 1px solid var(--panel-line); padding: 36px 24px 24px; text-align: center; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; text-transform: uppercase; color: var(--gold); }
 
-  nav { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  nav { margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   nav a { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 20px; min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--panel-line); border-radius: 4px; background: var(--panel); transition: all .2s; }
   nav a.active, nav a:hover { border-color: var(--gold); color: var(--gold); }
 
   main { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
-  .hero-card { background: var(--panel); border: 1px solid var(--panel-line); border-left: 4px solid var(--gold); padding: 32px; border-radius: 4px; }
-  .hero-card h2 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
-  .hero-card p { font-size: 1.1rem; color: var(--ink); margin-bottom: 16px; }
+
+  .contact-card { background: var(--panel); border: 1px solid var(--panel-line); border-left: 4px solid var(--gold); padding: 24px; margin-bottom: 24px; border-radius: 4px; }
+  .contact-card h3 { font-family: var(--font-display); font-size: 1.1rem; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; }
+  .contact-card p { color: var(--ink); font-size: 1.05rem; }
 
   footer { text-align: center; padding: 32px 24px; color: var(--ink-muted); font-size: 0.9rem; border-top: 1px solid var(--panel-line); }
   footer .stripe { margin: 0 auto 16px; }
@@ -60,28 +54,30 @@
 <body>
 
 <header>
-  <div class="avatar-ring">
-    <div class="avatar"><img src="karts.jpeg" alt="Ivan Profile Picture" class="avatar-img"></div>
-  </div>
-  <div class="eyebrow">ITCC 41 — Mobile Application Development</div>
-  <h1>Ivan Larrazabal</h1>
-  <p class="subtitle">BS IT Student &amp; Entrepreneur</p>
-  <div class="stripe centered"><span></span><span></span><span></span></div>
-
+  <h1>Contact Information</h1>
   <nav aria-label="Main Navigation">
-    <a href="index.html" class="active">Profile</a>
+    <a href="index.html">Profile</a>
     <a href="about.html">About</a>
     <a href="skills.html">Skills</a>
     <a href="projects.html">Projects</a>
-    <a href="contact.html">Contact</a>
+    <a href="contact.html" class="active">Contact</a>
   </nav>
 </header>
 
 <main>
-  <div class="hero-card">
-    <h2>Welcome to My Profile</h2>
-    <p>I am a second-year BS Information Technology student at Xavier University, balancing my academic pursuits with multi-venture entrepreneurship and Shotokan karate athletics.</p>
-    <p>Explore this multi-page mobile application to learn more about my background, technical competencies, ongoing projects, and contact details.</p>
+  <div class="contact-card">
+    <h3>Email Address</h3>
+    <p>20240030711@my.xu.edu.ph</p>
+  </div>
+
+  <div class="contact-card">
+    <h3>GitHub Profile</h3>
+    <p><a href="https://github.com/simmcardd" style="color: var(--gold); text-decoration: underline;">https://github.com/simmcardd</a></p>
+  </div>
+
+  <div class="contact-card">
+    <h3>Location</h3>
+    <p>Iligan City &amp; Cagayan de Oro City, Northern Mindanao, Philippines</p>
   </div>
 </main>
 
