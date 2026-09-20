@@ -1,30 +1,35 @@
-# Multi-Page Responsive Student Profile Application
+# Student Profile Mobile Application (Activity 5)
 
 ## Project Description
-This is an expanded multi-page mobile application built using Apache Cordova. The application reorganizes personal, academic, professional, and skill information across five distinct pages using pure HTML and responsive CSS without JavaScript navigation dependencies.
+This is an enhanced multi-page mobile application built using Apache Cordova for ITCC 41. It features dynamic profile editing capabilities powered by JavaScript DOM manipulation and persistent data storage using `localStorage`.
 
 ## Application Pages
-- **Profile (`index.html`):** The primary entry point featuring a summary profile picture, title, and quick introduction.
-- **About (`about.html`):** Provides in-depth personal background details, interests, educational status at Xavier University, and aspirations.
-- **Skills (`skills.html`):** Categorizes core skills including Entrepreneurship, Web Development, Social Media Management, Karate, and Event Organizing.
-- **Projects (`projects.html`):** Showcases key works, current business operations, and sports tournament organization.
-- **Contact (`contact.html`):** Provides student email address, GitHub repository link, and geographical location.
+- **Profile (`index.html`):** The primary homepage displaying student details and the interactive **Edit Profile** button.
+- **About (`about.html`):** Detailed narrative covering personal background, education at Xavier University, and goals.
+- **Skills (`skills.html`):** Comprehensive list of personal, technical, and sports competencies.
+- **Projects (`projects.html`):** Highlights academic projects, business ventures, and sports events.
+- **Contact (`contact.html`):** Contact details including email, location, and GitHub repository links.
 
-## Navigation
-Page navigation is constructed using native HTML relative hyperlinks (`href="index.html"`, `href="about.html"`, etc.) integrated into an accessible top navigation header present on all screens.
+## Profile Editing
+Clicking **Edit Profile** opens a modal interface that allows users to edit:
+- Full Name
+- Course / Program
+- Year Level
+- About Me summary
+- Skills list
+
+## JavaScript Functionality
+- **Form Handling & Updates:** Form inputs pre-fill with current profile data and dynamically re-render on the screen upon saving.
+- **Validation:** Prevents submission if any field is empty, displaying an inline error message (*"Please complete all required fields."*).
+- **Save & Cancel Controls:** Save updates both the interface and local storage; Cancel discards changes and closes the modal without altering profile state.
+
+## Local Data Storage
+Profile data is stored as a JSON string using browser `localStorage` (`localStorage.setItem('studentProfile', ...)`). When the app launches, JavaScript automatically retrieves and populates the saved profile data (`localStorage.getItem('studentProfile')`). If no saved data exists, default student information is loaded.
 
 ## Responsive Design
-Every page retains full media query responsiveness across **Desktop**, **Tablet**, and **Mobile** viewports:
-- Flexbox and CSS Grid adapt layouts from side-by-side structures to stacked columns on smaller viewports.
-- Touch controls feature a minimum height of 44px to satisfy mobile UI/UX usability requirements.
-
-## UI/UX Principles Applied (Module 4)
-- **Consistency:** Standardized dark theme (`#15171c`), gold accents (`#d4af37`), and typography across all 5 pages.
-- **Visual Hierarchy:** Distinct Oswald headers paired with readable Source Sans 3 body text.
-- **Usability:** Active page states highlighted in the navigation bar.
-- **Accessibility:** High contrast ratios, semantic HTML tags (`<header>`, `<main>`, `<nav>`, `<footer>`), and accessible image labels.
+Maintains responsive design across Desktop, Tablet, and Mobile devices using standard CSS media queries and flexbox/grid structures. Form fields and modal controls adjust automatically for touch devices.
 
 ## How to Run
-1. Navigate to the project directory:
+1. Open Terminal and navigate to the project directory:
    ```bash
    cd Larrazabal_StudentProfile
