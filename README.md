@@ -1,35 +1,34 @@
-# Student Profile Mobile Application (Activity 5)
+# Student Profile Mobile Application (Activity 6)
 
 ## Project Description
-This is an enhanced multi-page mobile application built using Apache Cordova for ITCC 41. It features dynamic profile editing capabilities powered by JavaScript DOM manipulation and persistent data storage using `localStorage`.
+This is an expanded multi-page mobile application built using Apache Cordova for ITCC 41. It integrates native device capabilities through the Cordova Camera Plugin, allowing users to capture a new profile photo directly from their device camera, view real-time previews, and persist the image across app restarts.
 
 ## Application Pages
-- **Profile (`index.html`):** The primary homepage displaying student details and the interactive **Edit Profile** button.
-- **About (`about.html`):** Detailed narrative covering personal background, education at Xavier University, and goals.
-- **Skills (`skills.html`):** Comprehensive list of personal, technical, and sports competencies.
-- **Projects (`projects.html`):** Highlights academic projects, business ventures, and sports events.
-- **Contact (`contact.html`):** Contact details including email, location, and GitHub repository links.
+- **Profile (`index.html`):** The main interface displaying student information, interactive profile photo, **Edit Profile** modal trigger, and **Change Profile Picture** camera button.
+- **About (`about.html`):** Background history, studies at Xavier University, personal interests, and goals.
+- **Skills (`skills.html`):** Categorized list of technical, business, and athletic competencies.
+- **Projects (`projects.html`):** Highlights software projects, business operations, and sports tournament organization.
+- **Contact (`contact.html`):** Student contact info, location, and GitHub repository links.
 
-## Profile Editing
-Clicking **Edit Profile** opens a modal interface that allows users to edit:
-- Full Name
-- Course / Program
-- Year Level
-- About Me summary
-- Skills list
+## Profile Editing & Data Storage
+- **Profile Editing:** Modal form allowing users to update Full Name, Course, Year Level, About Me, and Skills with JavaScript input validation.
+- **Local Data Storage:** Text profile fields and base64-encoded camera images are stored in browser `localStorage` (`localStorage.setItem('studentProfile', ...)`), maintaining persistence across app reboots.
 
-## JavaScript Functionality
-- **Form Handling & Updates:** Form inputs pre-fill with current profile data and dynamically re-render on the screen upon saving.
-- **Validation:** Prevents submission if any field is empty, displaying an inline error message (*"Please complete all required fields."*).
-- **Save & Cancel Controls:** Save updates both the interface and local storage; Cancel discards changes and closes the modal without altering profile state.
+## Camera Integration & Device Features
+The app integrates the official `cordova-plugin-camera` API:
+1. User taps the profile picture or clicks **Change Profile Picture**.
+2. Cordova calls `navigator.camera.getPicture()`, requesting native camera permissions and launching the device camera interface.
+3. Upon capturing a photo, the image is encoded as a Base64 JPEG string (`Camera.DestinationType.DATA_URL`).
+4. The JavaScript callback updates the `src` attribute of the `#profile-img` element and updates the saved image string in `localStorage`.
 
-## Local Data Storage
-Profile data is stored as a JSON string using browser `localStorage` (`localStorage.setItem('studentProfile', ...)`). When the app launches, JavaScript automatically retrieves and populates the saved profile data (`localStorage.getItem('studentProfile')`). If no saved data exists, default student information is loaded.
+## Image & Error Handling
+- **Cancellation:** If the user opens the camera and cancels without taking a picture, the existing profile photo remains untouched and the app continues operating smoothly.
+- **Error Handling:** Camera access failures or permission denials trigger a clear inline status notification (*"Unable to access the camera..."*) without causing app crashes.
 
 ## Responsive Design
-Maintains responsive design across Desktop, Tablet, and Mobile devices using standard CSS media queries and flexbox/grid structures. Form fields and modal controls adjust automatically for touch devices.
+Retains full responsiveness across **Desktop**, **Tablet**, and **Mobile** viewports using CSS media queries and flexbox layouts.
 
 ## How to Run
-1. Open Terminal and navigate to the project directory:
+1. Navigate to project root:
    ```bash
    cd Larrazabal_StudentProfile

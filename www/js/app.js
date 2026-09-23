@@ -4,23 +4,27 @@ const defaultProfile = {
   course: "BS Information Technology",
   yearLevel: "2nd Year",
   aboutMe: "I am a second-year BS Information Technology student at Xavier University, balancing my academic pursuits with multi-venture entrepreneurship and Shotokan karate athletics.",
-  skills: "Entrepreneurship, Web Development, Social Media Management, Shotokan Karate, Event Organizing"
+  skills: "Entrepreneurship, Web Development, Social Media Management, Shotokan Karate, Event Organizing",
+  photo: "karts.jpeg"
 };
 
-// Load saved data or use defaults
+// Load saved profile data & image from localStorage
 function loadProfile() {
   const savedData = localStorage.getItem("studentProfile");
   const profile = savedData ? JSON.parse(savedData) : defaultProfile;
 
-  // Render on homepage if elements exist
   if (document.getElementById("display-name")) document.getElementById("display-name").textContent = profile.fullName;
   if (document.getElementById("display-course")) document.getElementById("display-course").textContent = profile.course;
   if (document.getElementById("display-year")) document.getElementById("display-year").textContent = profile.yearLevel;
   if (document.getElementById("display-about")) document.getElementById("display-about").textContent = profile.aboutMe;
   if (document.getElementById("display-skills")) document.getElementById("display-skills").textContent = profile.skills;
+  
+  if (document.getElementById("profile-img") && profile.photo) {
+    document.getElementById("profile-img").src = profile.photo;
+  }
 }
 
-// Open Edit Modal and pre-fill form
+// Open Edit Profile Modal
 function openEditModal() {
   const savedData = localStorage.getItem("studentProfile");
   const profile = savedData ? JSON.parse(savedData) : defaultProfile;
@@ -35,12 +39,12 @@ function openEditModal() {
   document.getElementById("edit-modal").style.display = "flex";
 }
 
-// Close Edit Modal without saving
+// Close Edit Profile Modal
 function closeEditModal() {
   document.getElementById("edit-modal").style.display = "none";
 }
 
-// Save Profile with validation
+// Save Profile text fields
 function saveProfile(event) {
   event.preventDefault();
 
@@ -51,34 +55,110 @@ function saveProfile(event) {
   const skills = document.getElementById("edit-skills").value.trim();
   const errorMsg = document.getElementById("error-message");
 
-  // JavaScript Validation
   if (!fullName || !course || !yearLevel || !aboutMe || !skills) {
     errorMsg.textContent = "Please complete all required fields.";
     errorMsg.style.display = "block";
     return;
   }
 
-  const updatedProfile = { fullName, course, yearLevel, aboutMe, skills };
+  const savedData = localStorage.getItem("studentProfile");
+  const existingProfile = savedData ? JSON.parse(savedData) : defaultProfile;
 
-  // Store in localStorage
+  const updatedProfile = {
+    ...existingProfile,
+    fullName,
+    course,
+    yearLevel,
+    aboutMe,
+    skills
+  };
+
   localStorage.setItem("studentProfile", JSON.stringify(updatedProfile));
-
-  // Dynamically update UI
   loadProfile();
-
-  // Close modal
   closeEditModal();
 }
 
-// Initialize on DOM ready
-document.addEventListener("DOMContentLoaded", () => {
+// Cordova Camera Integration
+function capturePhoto() {
+  const statusDiv = document.getElementById("camera-status");
+  if (statusDiv) statusDiv.style.display = "none";
+
+  // Check if camera plugin is installed
+  if (!navigator.camera) {
+    showCameraStatus("Unable to access the camera. Please check your device permissions or plugin configuration.", true);
+    return;
+  }
+
+  const cameraOptions = {
+    quality: 60,
+    destinationType: Camera.DestinationType.DATA_URL,
+    sourceType: Camera.PictureSourceType.CAMERA,
+    encodingType: Camera.EncodingType.JPEG,
+    mediaType: Camera.MediaType.PICTURE,
+    correctOrientation: true,
+    targetWidth: 400,
+    targetHeight: 400
+  };
+
+  try {
+    navigator.camera.getPicture(onCameraSuccess, onCameraError, cameraOptions);
+  } catch (err) {
+    showCameraStatus("Unable to access the camera. Please check your device permissions.", true);
+  }
+}
+
+// Camera Success Handler
+function onCameraSuccess(imageData) {
+  const imageSrc = imageData.startsWith("data:image") ? imageData : "data:image/jpeg;base64," + imageData;
+
+  // Render on homepage
+  const profileImg = document.getElementById("profile-img");
+  if (profileImg) {
+    profileImg.src = imageSrc;
+  }
+
+  // Persist to localStorage
+  const savedData = localStorage.getItem("studentProfile");
+  const profile = savedData ? JSON.parse(savedData) : defaultProfile;
+  profile.photo = imageSrc;
+  localStorage.setItem("studentProfile", JSON.stringify(profile));
+}
+
+// Camera Error / Cancellation Handler
+function onCameraError(message) {
+  if (message && (message.toLowerCase().includes("cancelled") || message.toLowerCase().includes("no image selected"))) {
+    return; // User cancelled without taking a photo
+  }
+  showCameraStatus("Unable to access the camera. Please check your device permissions.", true);
+}
+
+function showCameraStatus(msg, isError = false) {
+  const statusDiv = document.getElementById("camera-status");
+  if (statusDiv) {
+    statusDiv.textContent = msg;
+    statusDiv.className = isError ? "status-msg error" : "status-msg";
+    statusDiv.style.display = "block";
+  }
+}
+
+// Initialize listeners on deviceready / DOMContentLoaded
+function init() {
   loadProfile();
 
   const editBtn = document.getElementById("edit-profile-btn");
   const cancelBtn = document.getElementById("cancel-btn");
   const editForm = document.getElementById("edit-profile-form");
+  const changePhotoBtn = document.getElementById("change-photo-btn");
+  const profileImgRing = document.getElementById("profile-img-ring");
 
   if (editBtn) editBtn.addEventListener("click", openEditModal);
   if (cancelBtn) cancelBtn.addEventListener("click", closeEditModal);
   if (editForm) editForm.addEventListener("submit", saveProfile);
+  if (changePhotoBtn) changePhotoBtn.addEventListener("click", capturePhoto);
+  if (profileImgRing) profileImgRing.addEventListener("click", capturePhoto);
+}
+
+document.addEventListener("deviceready", init, false);
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.cordova) init();
 });
