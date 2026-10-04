@@ -1,34 +1,29 @@
-# Student Profile Mobile Application (Activity 6)
+# Student Profile Mobile Application (Activity 7 — Database & Authentication)
 
 ## Project Description
-This is an expanded multi-page mobile application built using Apache Cordova for ITCC 41. It integrates native device capabilities through the Cordova Camera Plugin, allowing users to capture a new profile photo directly from their device camera, view real-time previews, and persist the image across app restarts.
+This application is a database-driven mobile application built with Apache Cordova, backed by a RESTful Express/Node.js API and SQLite database. It incorporates user authentication, CRUD operations, camera integration, and secure token management.
 
-## Application Pages
-- **Profile (`index.html`):** The main interface displaying student information, interactive profile photo, **Edit Profile** modal trigger, and **Change Profile Picture** camera button.
-- **About (`about.html`):** Background history, studies at Xavier University, personal interests, and goals.
-- **Skills (`skills.html`):** Categorized list of technical, business, and athletic competencies.
-- **Projects (`projects.html`):** Highlights software projects, business operations, and sports tournament organization.
-- **Contact (`contact.html`):** Student contact info, location, and GitHub repository links.
+## Application Pages & Authentication
+- **Login (`index.html`):** Unauthenticated entry point requiring Student ID/Email and Password.
+- **Profile (`index.html`):** Protected dashboard displaying database-stored student details, interactive profile picture, and logout controls.
+- **About, Skills, Projects, Contact:** Complementary profile sections.
 
-## Profile Editing & Data Storage
-- **Profile Editing:** Modal form allowing users to update Full Name, Course, Year Level, About Me, and Skills with JavaScript input validation.
-- **Local Data Storage:** Text profile fields and base64-encoded camera images are stored in browser `localStorage` (`localStorage.setItem('studentProfile', ...)`), maintaining persistence across app reboots.
+## Authentication & Database Integration
+- **Backend Stack:** Node.js, Express.js, SQLite (`sqlite3`), and JSON Web Tokens (`jsonwebtoken`).
+- **Security:** Passwords are hashed using `bcryptjs` before database storage. No plain text passwords or API keys are stored in source code.
+- **Data Flow:**
+  `Cordova App` ➔ `REST API (/api/login)` ➔ `SQLite Database` ➔ `JWT Token Granted` ➔ `Fetch Profile Data`
 
-## Camera Integration & Device Features
-The app integrates the official `cordova-plugin-camera` API:
-1. User taps the profile picture or clicks **Change Profile Picture**.
-2. Cordova calls `navigator.camera.getPicture()`, requesting native camera permissions and launching the device camera interface.
-3. Upon capturing a photo, the image is encoded as a Base64 JPEG string (`Camera.DestinationType.DATA_URL`).
-4. The JavaScript callback updates the `src` attribute of the `#profile-img` element and updates the saved image string in `localStorage`.
-
-## Image & Error Handling
-- **Cancellation:** If the user opens the camera and cancels without taking a picture, the existing profile photo remains untouched and the app continues operating smoothly.
-- **Error Handling:** Camera access failures or permission denials trigger a clear inline status notification (*"Unable to access the camera..."*) without causing app crashes.
-
-## Responsive Design
-Retains full responsiveness across **Desktop**, **Tablet**, and **Mobile** viewports using CSS media queries and flexbox layouts.
+## CRUD Operations
+- **Create:** Seeds initial student records and user credentials in SQLite database.
+- **Read:** Retrieves profile fields (`full_name`, `course`, `year_level`, `about_me`, `skills`, `photo`) from SQLite via JWT authentication.
+- **Update:** Edits text information and updates profile picture references directly in SQLite.
+- **Delete:** Implements endpoint `/api/profile/delete-test` to execute record deletion.
 
 ## How to Run
-1. Navigate to project root:
+
+1. **Start the Database Backend Server:**
    ```bash
-   cd Larrazabal_StudentProfile
+   cd server
+   npm install
+   node server.js

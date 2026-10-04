@@ -1,164 +1,185 @@
-// Default profile fallback values
-const defaultProfile = {
-  fullName: "Ivan Larrazabal",
-  course: "BS Information Technology",
-  yearLevel: "2nd Year",
-  aboutMe: "I am a second-year BS Information Technology student at Xavier University, balancing my academic pursuits with multi-venture entrepreneurship and Shotokan karate athletics.",
-  skills: "Entrepreneurship, Web Development, Social Media Management, Shotokan Karate, Event Organizing",
-  photo: "karts.jpeg"
-};
+const API_BASE = 'http://10.0.2.2:3000/api';
 
-// Load saved profile data & image from localStorage
-function loadProfile() {
-  const savedData = localStorage.getItem("studentProfile");
-  const profile = savedData ? JSON.parse(savedData) : defaultProfile;
+document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('deviceready', initApp, false);
 
-  if (document.getElementById("display-name")) document.getElementById("display-name").textContent = profile.fullName;
-  if (document.getElementById("display-course")) document.getElementById("display-course").textContent = profile.course;
-  if (document.getElementById("display-year")) document.getElementById("display-year").textContent = profile.yearLevel;
-  if (document.getElementById("display-about")) document.getElementById("display-about").textContent = profile.aboutMe;
-  if (document.getElementById("display-skills")) document.getElementById("display-skills").textContent = profile.skills;
-  
-  if (document.getElementById("profile-img") && profile.photo) {
-    document.getElementById("profile-img").src = profile.photo;
+function initApp() {
+  const loginForm = document.getElementById('login-form');
+  if (loginForm) {
+    loginForm.addEventListener('submit', handleLogin);
+  }
+
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
+
+  const editBtn = document.getElementById('edit-profile-btn');
+  if (editBtn) {
+    editBtn.addEventListener('click', openEditModal);
+  }
+
+  const cancelBtn = document.getElementById('cancel-btn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeEditModal);
+  }
+
+  const editForm = document.getElementById('edit-profile-form');
+  if (editForm) {
+    editForm.addEventListener('submit', handleProfileUpdate);
+  }
+
+  checkAuthState();
+}
+
+async function handleLogin(event) {
+  if (event) event.preventDefault();
+
+  const studentId = document.getElementById("login-id").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+
+  if (!studentId || !password) {
+    alert("Please enter both Student ID and Password.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ studentId, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("Login Failed: " + (data.error || "Invalid credentials"));
+      return;
+    }
+
+    localStorage.setItem("authToken", data.token);
+    alert("Login Successful!");
+    checkAuthState();
+  } catch (err) {
+    alert("Connection Error! Unable to reach http://10.0.2.2:3000/api/login. Make sure 'node server.js' is running in Terminal.");
   }
 }
 
-// Open Edit Profile Modal
+function checkAuthState() {
+  const token = localStorage.getItem("authToken");
+  const loginView = document.getElementById("login-view");
+  const profileView = document.getElementById("profile-view");
+
+  if (token) {
+    if (loginView) loginView.style.display = "none";
+    if (profileView) profileView.style.display = "block";
+    loadProfileData();
+  } else {
+    if (loginView) loginView.style.display = "flex";
+    if (profileView) profileView.style.display = "none";
+  }
+}
+
+async function loadProfileData() {
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/profile`, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      // Header Info
+      const nameElem = document.getElementById("display-name");
+      if (nameElem) nameElem.innerText = data.fullName || data.full_name || "Ivan Larrazabal";
+
+      const courseElem = document.getElementById("display-course");
+      if (courseElem) courseElem.innerText = data.course || "BS Information Technology";
+
+      const yearElem = document.getElementById("display-year");
+      if (yearElem) yearElem.innerText = data.yearLevel || data.year_level || "2nd Year";
+
+      // Profile Body Info
+      const aboutElem = document.getElementById("display-about");
+      if (aboutElem) aboutElem.innerText = data.aboutMe || data.about_me || "";
+
+      const skillsElem = document.getElementById("display-skills");
+      if (skillsElem) skillsElem.innerText = data.skills || "";
+    }
+  } catch (err) {
+    console.error("Error loading profile data:", err);
+  }
+}
+
 function openEditModal() {
-  const savedData = localStorage.getItem("studentProfile");
-  const profile = savedData ? JSON.parse(savedData) : defaultProfile;
+  const modal = document.getElementById("edit-modal");
+  if (modal) modal.style.display = "flex";
 
-  document.getElementById("edit-fullname").value = profile.fullName;
-  document.getElementById("edit-course").value = profile.course;
-  document.getElementById("edit-year").value = profile.yearLevel;
-  document.getElementById("edit-about").value = profile.aboutMe;
-  document.getElementById("edit-skills").value = profile.skills;
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
 
-  document.getElementById("error-message").style.display = "none";
-  document.getElementById("edit-modal").style.display = "flex";
+  fetch(`${API_BASE}/profile`, {
+    headers: { "Authorization": `Bearer ${token}` }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (document.getElementById("edit-fullname")) document.getElementById("edit-fullname").value = data.fullName || data.full_name || "";
+    if (document.getElementById("edit-course")) document.getElementById("edit-course").value = data.course || "";
+    if (document.getElementById("edit-year")) document.getElementById("edit-year").value = data.yearLevel || data.year_level || "";
+    if (document.getElementById("edit-about")) document.getElementById("edit-about").value = data.aboutMe || data.about_me || "";
+    if (document.getElementById("edit-skills")) document.getElementById("edit-skills").value = data.skills || "";
+  })
+  .catch(err => console.error("Error pre-filling edit modal:", err));
 }
 
-// Close Edit Profile Modal
 function closeEditModal() {
-  document.getElementById("edit-modal").style.display = "none";
+  const modal = document.getElementById("edit-modal");
+  if (modal) modal.style.display = "none";
 }
 
-// Save Profile text fields
-function saveProfile(event) {
-  event.preventDefault();
+async function handleProfileUpdate(event) {
+  if (event) event.preventDefault();
 
-  const fullName = document.getElementById("edit-fullname").value.trim();
-  const course = document.getElementById("edit-course").value.trim();
-  const yearLevel = document.getElementById("edit-year").value.trim();
-  const aboutMe = document.getElementById("edit-about").value.trim();
-  const skills = document.getElementById("edit-skills").value.trim();
-  const errorMsg = document.getElementById("error-message");
-
-  if (!fullName || !course || !yearLevel || !aboutMe || !skills) {
-    errorMsg.textContent = "Please complete all required fields.";
-    errorMsg.style.display = "block";
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    alert("Session expired. Please log in again.");
     return;
   }
 
-  const savedData = localStorage.getItem("studentProfile");
-  const existingProfile = savedData ? JSON.parse(savedData) : defaultProfile;
-
-  const updatedProfile = {
-    ...existingProfile,
-    fullName,
-    course,
-    yearLevel,
-    aboutMe,
-    skills
-  };
-
-  localStorage.setItem("studentProfile", JSON.stringify(updatedProfile));
-  loadProfile();
-  closeEditModal();
-}
-
-// Cordova Camera Integration
-function capturePhoto() {
-  const statusDiv = document.getElementById("camera-status");
-  if (statusDiv) statusDiv.style.display = "none";
-
-  // Check if camera plugin is installed
-  if (!navigator.camera) {
-    showCameraStatus("Unable to access the camera. Please check your device permissions or plugin configuration.", true);
-    return;
-  }
-
-  const cameraOptions = {
-    quality: 60,
-    destinationType: Camera.DestinationType.DATA_URL,
-    sourceType: Camera.PictureSourceType.CAMERA,
-    encodingType: Camera.EncodingType.JPEG,
-    mediaType: Camera.MediaType.PICTURE,
-    correctOrientation: true,
-    targetWidth: 400,
-    targetHeight: 400
+  const payload = {
+    fullName: document.getElementById("edit-fullname").value,
+    course: document.getElementById("edit-course").value,
+    yearLevel: document.getElementById("edit-year").value,
+    aboutMe: document.getElementById("edit-about").value,
+    skills: document.getElementById("edit-skills").value
   };
 
   try {
-    navigator.camera.getPicture(onCameraSuccess, onCameraError, cameraOptions);
+    const res = await fetch(`${API_BASE}/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("Profile updated successfully!");
+      closeEditModal();
+      loadProfileData();
+    } else {
+      alert("Failed to update profile: " + (data.error || "Server error"));
+    }
   } catch (err) {
-    showCameraStatus("Unable to access the camera. Please check your device permissions.", true);
+    alert("Network error while saving updates.");
   }
 }
 
-// Camera Success Handler
-function onCameraSuccess(imageData) {
-  const imageSrc = imageData.startsWith("data:image") ? imageData : "data:image/jpeg;base64," + imageData;
-
-  // Render on homepage
-  const profileImg = document.getElementById("profile-img");
-  if (profileImg) {
-    profileImg.src = imageSrc;
-  }
-
-  // Persist to localStorage
-  const savedData = localStorage.getItem("studentProfile");
-  const profile = savedData ? JSON.parse(savedData) : defaultProfile;
-  profile.photo = imageSrc;
-  localStorage.setItem("studentProfile", JSON.stringify(profile));
+function handleLogout() {
+  localStorage.removeItem("authToken");
+  checkAuthState();
 }
-
-// Camera Error / Cancellation Handler
-function onCameraError(message) {
-  if (message && (message.toLowerCase().includes("cancelled") || message.toLowerCase().includes("no image selected"))) {
-    return; // User cancelled without taking a photo
-  }
-  showCameraStatus("Unable to access the camera. Please check your device permissions.", true);
-}
-
-function showCameraStatus(msg, isError = false) {
-  const statusDiv = document.getElementById("camera-status");
-  if (statusDiv) {
-    statusDiv.textContent = msg;
-    statusDiv.className = isError ? "status-msg error" : "status-msg";
-    statusDiv.style.display = "block";
-  }
-}
-
-// Initialize listeners on deviceready / DOMContentLoaded
-function init() {
-  loadProfile();
-
-  const editBtn = document.getElementById("edit-profile-btn");
-  const cancelBtn = document.getElementById("cancel-btn");
-  const editForm = document.getElementById("edit-profile-form");
-  const changePhotoBtn = document.getElementById("change-photo-btn");
-  const profileImgRing = document.getElementById("profile-img-ring");
-
-  if (editBtn) editBtn.addEventListener("click", openEditModal);
-  if (cancelBtn) cancelBtn.addEventListener("click", closeEditModal);
-  if (editForm) editForm.addEventListener("submit", saveProfile);
-  if (changePhotoBtn) changePhotoBtn.addEventListener("click", capturePhoto);
-  if (profileImgRing) profileImgRing.addEventListener("click", capturePhoto);
-}
-
-document.addEventListener("deviceready", init, false);
-document.addEventListener("DOMContentLoaded", () => {
-  if (!window.cordova) init();
-});

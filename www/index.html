@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ivan Larrazabal — Profile</title>
+<title>Ivan Larrazabal — Student Profile</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,6 +17,7 @@
     --ink: #f2f0ea;
     --ink-muted: #a0a6ac;
     --danger: #e74c3c;
+    --success: #2ecc71;
     --font-display: 'Oswald', sans-serif;
     --font-body: 'Source Sans 3', sans-serif;
   }
@@ -30,6 +31,11 @@
   .stripe span:nth-child(2) { background: var(--gold-dim); }
   .stripe span:nth-child(3) { background: var(--panel-line); }
 
+  .auth-wrapper { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+  .auth-card { background: var(--panel); border: 1px solid var(--panel-line); border-top: 4px solid var(--gold); padding: 40px; border-radius: 6px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+  .auth-card h2 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; text-align: center; }
+  .auth-card p { color: var(--ink-muted); text-align: center; margin-bottom: 24px; font-size: 0.95rem; }
+
   header { border-bottom: 1px solid var(--panel-line); padding: 48px 24px 32px; text-align: center; }
   .avatar-container { position: relative; width: 130px; margin: 0 auto 20px; }
   .avatar-ring { width: 130px; height: 130px; border-radius: 50%; border: 2px solid var(--gold); padding: 6px; cursor: pointer; }
@@ -42,8 +48,10 @@
   .stripe.centered { margin: 18px auto 0; }
 
   nav { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  nav a { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 20px; min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--panel-line); border-radius: 4px; background: var(--panel); transition: all .2s; }
+  nav a, nav button { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 20px; min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--panel-line); border-radius: 4px; background: var(--panel); color: var(--ink); cursor: pointer; transition: all .2s; }
   nav a.active, nav a:hover { border-color: var(--gold); color: var(--gold); }
+  nav button.logout-btn { border-color: var(--danger); color: var(--danger); }
+  nav button.logout-btn:hover { background: var(--danger); color: #fff; }
 
   main { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
   .hero-card { background: var(--panel); border: 1px solid var(--panel-line); border-left: 4px solid var(--gold); padding: 32px; border-radius: 4px; margin-bottom: 24px; }
@@ -53,15 +61,15 @@
   .meta-tag strong { color: var(--gold); }
 
   .action-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
-  .btn { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 12px 24px; border: 1px solid var(--gold); background: var(--gold); color: #000; font-weight: 700; border-radius: 4px; cursor: pointer; transition: all .2s; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .btn { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 12px 24px; border: 1px solid var(--gold); background: var(--gold); color: #000; font-weight: 700; border-radius: 4px; cursor: pointer; transition: all .2s; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; width: 100%; }
   .btn:hover { background: #b8952d; border-color: #b8952d; }
-  .btn-secondary { background: transparent; color: var(--ink); border-color: var(--panel-line); }
+  .btn-secondary { background: transparent; color: var(--ink); border-color: var(--panel-line); width: auto; }
   .btn-secondary:hover { border-color: var(--ink-muted); background: var(--panel-line); }
 
-  .status-msg { margin-top: 12px; padding: 10px; border-radius: 4px; font-size: 0.9rem; display: none; }
+  .status-msg { margin-top: 12px; padding: 10px; border-radius: 4px; font-size: 0.9rem; display: none; text-align: center; }
   .status-msg.error { background: rgba(231, 76, 60, 0.2); border: 1px solid var(--danger); color: #f29c9c; }
+  .status-msg.success { background: rgba(46, 204, 113, 0.2); border: 1px solid var(--success); color: #a3e9a4; }
 
-  /* Edit Modal Styling */
   .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
   .modal-content { background: var(--panel); border: 1px solid var(--gold); border-radius: 6px; padding: 32px; width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; }
   .modal-content h2 { font-family: var(--font-display); color: var(--gold); text-transform: uppercase; margin-bottom: 20px; font-size: 1.6rem; }
@@ -70,97 +78,119 @@
   .form-group label { display: block; font-family: var(--font-display); letter-spacing: 0.05em; font-size: 0.9rem; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
   .form-group input, .form-group textarea { width: 100%; background: var(--bg); border: 1px solid var(--panel-line); color: var(--ink); padding: 10px; border-radius: 4px; font-family: var(--font-body); font-size: 1rem; }
   .form-group input:focus, .form-group textarea:focus { border-color: var(--gold); outline: none; }
-  
-  .error-msg { color: var(--danger); font-size: 0.9rem; margin-bottom: 16px; display: none; font-weight: 600; }
-  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
 
   footer { text-align: center; padding: 32px 24px; color: var(--ink-muted); font-size: 0.9rem; border-top: 1px solid var(--panel-line); }
   footer .stripe { margin: 0 auto 16px; }
 
   @media (max-width: 600px) {
     nav { width: 100%; gap: 8px; }
-    nav a { flex: 1 1 40%; text-align: center; justify-content: center; font-size: 0.85rem; padding: 8px 12px; }
+    nav a, nav button { flex: 1 1 40%; text-align: center; justify-content: center; font-size: 0.85rem; padding: 8px 12px; }
     .action-bar { flex-direction: column; }
     .action-bar .btn { width: 100%; }
-    .modal-actions { flex-direction: column; }
-    .modal-actions .btn { width: 100%; text-align: center; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="avatar-container">
-    <div class="avatar-ring" id="profile-img-ring">
-      <div class="avatar"><img id="profile-img" src="karts.jpeg" alt="Ivan Profile Picture" class="avatar-img"></div>
-    </div>
-  </div>
-  <div class="eyebrow">ITCC 41 — Mobile Application Development</div>
-  <h1 id="display-name">Ivan Larrazabal</h1>
-  <p class="subtitle"><span id="display-course">BS Information Technology</span> — <span id="display-year">2nd Year</span></p>
-  <div class="stripe centered"><span></span><span></span><span></span></div>
-
-  <nav aria-label="Main Navigation">
-    <a href="index.html" class="active">Profile</a>
-    <a href="about.html">About</a>
-    <a href="skills.html">Skills</a>
-    <a href="projects.html">Projects</a>
-    <a href="contact.html">Contact</a>
-  </nav>
-</header>
-
-<main>
-  <div class="hero-card">
-    <h2>Student Profile</h2>
-    <p id="display-about">I am a second-year BS Information Technology student at Xavier University, balancing my academic pursuits with multi-venture entrepreneurship and Shotokan karate athletics.</p>
-    <div class="meta-tag"><strong>Core Skills:</strong> <span id="display-skills">Entrepreneurship, Web Development, Social Media Management, Shotokan Karate, Event Organizing</span></div>
+<div id="login-view" class="auth-wrapper">
+  <div class="auth-card">
+    <div class="stripe centered" style="margin-bottom: 20px;"><span></span><span></span><span></span></div>
+    <h2>Student Login</h2>
+    <p>Sign in to access your student profile database</p>
     
-    <div class="action-bar">
-      <button id="edit-profile-btn" class="btn">Edit Profile</button>
-      <button id="change-photo-btn" class="btn btn-secondary">Change Profile Picture</button>
-    </div>
-    <div id="camera-status" class="status-msg"></div>
-  </div>
-</main>
+    <div id="login-status" class="status-msg"></div>
 
-<!-- Edit Profile Modal Interface -->
-<div id="edit-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal-content">
-    <h2 id="modal-title">Edit Student Profile</h2>
-    <div id="error-message" class="error-msg"></div>
-    <form id="edit-profile-form">
+    <form id="login-form">
       <div class="form-group">
-        <label for="edit-fullname">Full Name</label>
-        <input type="text" id="edit-fullname" required>
+        <label for="login-id">Student ID / Email</label>
+        <input type="text" id="login-id" placeholder="20240030711 or ivan@xu.edu.ph" required>
       </div>
       <div class="form-group">
-        <label for="edit-course">Course / Program</label>
-        <input type="text" id="edit-course" required>
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
       </div>
-      <div class="form-group">
-        <label for="edit-year">Year Level</label>
-        <input type="text" id="edit-year" required>
-      </div>
-      <div class="form-group">
-        <label for="edit-about">About Me</label>
-        <textarea id="edit-about" rows="3" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="edit-skills">Skills</label>
-        <input type="text" id="edit-skills" required>
-      </div>
-      <div class="modal-actions">
-        <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
-        <button type="submit" class="btn">Save</button>
-      </div>
+      <button type="submit" id="login-btn" class="btn" style="margin-top: 12px;">Log In</button>
     </form>
+    <p style="margin-top: 20px; font-size: 0.85rem; color: var(--ink-muted);">Test Credentials: <strong>20240030711</strong> / <strong>password123</strong></p>
   </div>
 </div>
 
-<footer>
-  <div class="stripe"><span></span><span></span><span></span></div>
-  <p>&copy; 2026 <strong>Ivan Larrazabal</strong>. All rights reserved.</p>
-</footer>
+<div id="profile-view" style="display: none;">
+  <header>
+    <div class="avatar-container">
+      <div class="avatar-ring" id="profile-img-ring">
+        <div class="avatar"><img id="profile-img" src="karts.jpeg" alt="Ivan Profile Picture" class="avatar-img"></div>
+      </div>
+    </div>
+    <div class="eyebrow">ITCC 41 — Mobile Application Development</div>
+    <h1 id="display-name">Ivan Larrazabal</h1>
+    <p class="subtitle"><span id="display-course">BS Information Technology</span> — <span id="display-year">2nd Year</span></p>
+    <div class="stripe centered"><span></span><span></span><span></span></div>
+
+    <nav aria-label="Main Navigation">
+      <a href="index.html" class="active">Profile</a>
+      <a href="about.html">About</a>
+      <a href="skills.html">Skills</a>
+      <a href="projects.html">Projects</a>
+      <a href="contact.html">Contact</a>
+      <button id="logout-btn" class="logout-btn">Logout</button>
+    </nav>
+  </header>
+
+  <main>
+    <div id="global-status" class="status-msg"></div>
+
+    <div class="hero-card">
+      <h2>Student Profile</h2>
+      <p id="display-about">I am a second-year BS Information Technology student at Xavier University...</p>
+      <div class="meta-tag"><strong>Core Skills:</strong> <span id="display-skills">Entrepreneurship, Web Development</span></div>
+      
+      <div class="action-bar">
+        <button id="edit-profile-btn" class="btn btn-secondary">Edit Profile</button>
+        <button id="change-photo-btn" class="btn btn-secondary">Change Profile Picture</button>
+      </div>
+      <div id="camera-status" class="status-msg"></div>
+    </div>
+  </main>
+
+  <div id="edit-modal" class="modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <h2>Edit Student Profile</h2>
+      <div id="modal-status" class="status-msg"></div>
+      <form id="edit-profile-form">
+        <div class="form-group">
+          <label for="edit-fullname">Full Name</label>
+          <input type="text" id="edit-fullname" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-course">Course / Program</label>
+          <input type="text" id="edit-course" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-year">Year Level</label>
+          <input type="text" id="edit-year" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-about">About Me</label>
+          <textarea id="edit-about" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="edit-skills">Skills</label>
+          <input type="text" id="edit-skills" required>
+        </div>
+        <div class="action-bar" style="justify-content: flex-end;">
+          <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-secondary" style="background: var(--gold); color: #000;">Save to Database</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div class="stripe"><span></span><span></span><span></span></div>
+    <p>&copy; 2026 <strong>Ivan Larrazabal</strong>. All rights reserved.</p>
+  </footer>
+</div>
 
 <script src="cordova.js"></script>
 <script src="js/app.js"></script>
